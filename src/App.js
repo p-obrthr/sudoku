@@ -1,5 +1,5 @@
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
 
@@ -15,27 +15,61 @@ function App() {
 		[-1, -1, -1, -1, 8, -1, -1, 7, 9]
 	];
 
-	const [sudokuArr, setSudokuArr] = useState(getDeepCopy(matrix));
+	const defaultMatrix = [ 
+		[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+		[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+		[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+		[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+		[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+		[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+		[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+		[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+		[-1, -1, -1, -1, -1, -1, -1, -1, -1]
+	];
+
+	const [sudokuArr, setSudokuArr] = useState(getDeepCopy(defaultMatrix));
+	const [solved, setSolved] = useState(false);
+	const [isExampleSet, setIsExampleSet] = useState(false);
+
+	useEffect(() => {
+		setSolved(false); 
+	  }, [sudokuArr]);
 
 	function getDeepCopy(arr) {
 		return JSON.parse(JSON.stringify(arr));
 	}
 
+	function fillExampleMatrix() {
+		setSudokuArr(getDeepCopy(matrix));
+		setIsExampleSet(true);
+	  }	
+
   	function onInputChange(e, row, col) {
-		var val = parseInt(e.target.value) || -1, grid = getDeepCopy(sudokuArr);
-		if (val === -1 || val >= 1 && val <= 9) {
-			grid[row][col] = val;
+		if (!solved && !isExampleSet) {
+		  const val = parseInt(e.target.value) || -1;
+		  if (val === -1 || (val >= 1 && val <= 9)) {
+			const updatedSudoku = getDeepCopy(sudokuArr);
+			updatedSudoku[row][col] = val;
+			setSudokuArr(updatedSudoku);
+		  }
 		}
-	setSudokuArr(grid);
-  	}
+	  }
 
 	function solve() {
+		const inputs = document.querySelectorAll(".cellInput");
+  		inputs.forEach((input) => {
+		const row = parseInt(input.getAttribute("data-row"));
+		const col = parseInt(input.getAttribute("data-col"));
+		if (sudokuArr[row][col] !== -1) {
+		input.setAttribute("disabled", "true");
+		}
+	});
 		if (solveSudoku(0, 0)) {
-		  	setSudokuArr([...sudokuArr]);
+			setSolved(true);
 		} else {
 		  	alert("no solution");
 		}
-	}
+	} 
 	  
 	function solveSudoku(row, col) {
 		if (row === 9) {
@@ -82,7 +116,7 @@ function App() {
 	  }
 
 	function reset() {
-		setSudokuArr(getDeepCopy(matrix));
+		setSudokuArr(getDeepCopy(defaultMatrix));
 	}
 	  
 return (
@@ -96,10 +130,13 @@ return (
 				return <tr key={rIndex} className={(row + 1) %3 === 0 ? 'bBorder' : ''}>
 				  {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((col, cIndex) => {
 					return <td key={rIndex + cIndex} className={(col + 1) %3 === 0 ? 'rBorder' : ''}>
-					  <input onChange={(e) => onInputChange(e, row, col)} 
+					  <input 
+					  onChange={(e) => onInputChange(e, row, col)} 
 					  value={sudokuArr[row][col] === -1 ? '' : sudokuArr[row][col]} 
 					  className = "cellInput"
-					  disabled={matrix[row][col] !== -1}
+					  data-row={row}
+                      data-col={col}
+					  /* disabled={(isExampleSet && matrix[rIndex][cIndex] !== -1) || solved} */
 					  />
 					</td>
 				  })}
@@ -109,6 +146,7 @@ return (
 		  </tbody>
 		</table>
 		<div className="buttonContainer">
+			<button className="button-30" onClick={fillExampleMatrix}>example</button>
 			<button className="button-30" onClick={solve}>solve</button>
 			<button className="button-30" onClick={reset}>reset</button>
 	  </div>
