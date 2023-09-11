@@ -42,7 +42,65 @@ function App() {
 	function fillExampleMatrix() {
 		setSudokuArr(getDeepCopy(matrix));
 		setIsExampleSet(true);
-	  }	
+	}	
+
+	function fillRandomMatrix() {
+		let randomMatrix = [ 
+			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
+			[-1, -1, -1, -1, -1, -1, -1, -1, -1]
+		];
+
+		let i = 0;
+		while (i<20) {
+			const row = Math.floor(Math.random() * 9);
+      		const col = Math.floor(Math.random() * 9);
+			const num = Math.floor(Math.random() * 9)+1;
+			if(randomMatrix[row][col] === -1 & 
+				isValidInRow(randomMatrix, row, num) &&
+				isValidInCol(randomMatrix, col, num) &&
+				isValidInBox(randomMatrix, row, col, num)
+			) {
+				randomMatrix[row][col] = num;
+				i++;
+			}
+		}
+
+		setSudokuArr(randomMatrix);
+   
+	}
+
+	function isValidInRow(board, row, num) {
+		return !board[row].includes(num);
+	  }
+
+	function isValidInCol(board, col, num) {
+		for (let i = 0; i < 9; i++) {
+		  if (board[i][col] === num) {
+			return false;
+		  }
+		}
+		return true;
+	  }
+
+	function isValidInBox(board, row, col, num) {
+		const boxStartRow = Math.floor(row / 3) * 3;
+		const boxStartCol = Math.floor(col / 3) * 3;
+		for (let i = boxStartRow; i < boxStartRow + 3; i++) {
+		  for (let j = boxStartCol; j < boxStartCol + 3; j++) {
+			if (board[i][j] === num) {
+			  return false;
+			}
+		  }
+		}
+		return true;
+	  }
 
   	function onInputChange(e, row, col) {
 		if (!solved && !isExampleSet) {
@@ -61,7 +119,7 @@ function App() {
 		const row = parseInt(input.getAttribute("data-row"));
 		const col = parseInt(input.getAttribute("data-col"));
 		if (sudokuArr[row][col] !== -1) {
-		input.setAttribute("disabled", "true");
+			input.setAttribute("disabled", "true");
 		}
 	});
 		if (solveSudoku(0, 0)) {
@@ -116,13 +174,18 @@ function App() {
 	  }
 
 	function reset() {
+		const inputs = document.querySelectorAll(".cellInput");
+  		inputs.forEach((input) => {
+    	input.removeAttribute("disabled");
+ 		});
 		setSudokuArr(getDeepCopy(defaultMatrix));
+		setSolved(false); 
 	}
 	  
 return (
 	<div className="App">
 	  <div className="App-header">
-		<h3>let's solve your sudoku:</h3>
+		<h3>sudoku:</h3>
 		<table>
 		  <tbody>
 			{
@@ -147,6 +210,7 @@ return (
 		</table>
 		<div className="buttonContainer">
 			<button className="button-30" onClick={fillExampleMatrix}>example</button>
+			<button className="button-30" onClick={fillRandomMatrix}>random</button>
 			<button className="button-30" onClick={solve}>solve</button>
 			<button className="button-30" onClick={reset}>reset</button>
 	  </div>
