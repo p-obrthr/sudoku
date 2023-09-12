@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/sudoku/static/css/main.165e28e0.css",
+    "main.js": "/sudoku/static/js/main.9b60cc6b.js",
+    "index.html": "/sudoku/index.html",
+    "main.165e28e0.css.map": "/sudoku/static/css/main.165e28e0.css.map",
+    "main.9b60cc6b.js.map": "/sudoku/static/js/main.9b60cc6b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.165e28e0.css",
+    "static/js/main.9b60cc6b.js"
+  ]
+}
