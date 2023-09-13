@@ -3,18 +3,6 @@ import { useState, useEffect } from 'react';
 
 function App() {
 
-	const matrix = [ 
-		[5, 3, -1, -1, 7, -1, -1, -1, -1],
-		[6, -1, -1, 1, 9, 5, -1, -1, -1],
-		[-1, 9, 8, -1, -1, -1, -1, 6, -1],
-		[8, -1, -1, -1, 6, -1, -1, -1, 3],
-		[4, -1, -1, 8, -1, 3, -1, -1, 1],
-		[7, -1, -1, -1, 2, -1, -1, -1, 6],
-		[-1, 6, -1, -1, -1, -1, 2, 8, -1],
-		[-1, -1, -1, 4, 1, 9, -1, -1, 5],
-		[-1, -1, -1, -1, 8, -1, -1, 7, 9]
-	];
-
 	const defaultMatrix = [ 
 		[-1, -1, -1, -1, -1, -1, -1, -1, -1],
 		[-1, -1, -1, -1, -1, -1, -1, -1, -1],
@@ -29,7 +17,6 @@ function App() {
 
 	const [sudokuArr, setSudokuArr] = useState(getDeepCopy(defaultMatrix));
 	const [solved, setSolved] = useState(false);
-	const [isExampleSet, setIsExampleSet] = useState(false);
 
 	useEffect(() => {
 		setSolved(false); 
@@ -38,11 +25,6 @@ function App() {
 	function getDeepCopy(arr) {
 		return JSON.parse(JSON.stringify(arr));
 	}
-
-	function fillExampleMatrix() {
-		setSudokuArr(getDeepCopy(matrix));
-		setIsExampleSet(true);
-	}	
 
 	function fillRandomMatrix() {
 		let randomMatrix = getDeepCopy(defaultMatrix);
@@ -183,7 +165,7 @@ function App() {
 	  }
 
   	function onInputChange(e, row, col) {
-		if (!solved && !isExampleSet) {
+		if (!solved) {
 		  const val = parseInt(e.target.value) || -1;
 		  if (val === -1 || (val >= 1 && val <= 9)) {
 			const updatedSudoku = getDeepCopy(sudokuArr);
@@ -283,7 +265,7 @@ return (
 					  className = "cellInput"
 					  data-row={row}
                       data-col={col}
-					  /* disabled={(isExampleSet && matrix[rIndex][cIndex] !== -1) || solved} */
+					  /* disabled alternative */
 					  />
 					</td>
 				  })}
@@ -293,7 +275,6 @@ return (
 		  </tbody>
 		</table>
 		<div className="buttonContainer">
-			<button className="button-30" onClick={fillExampleMatrix}>example</button>
 			<button className="button-30" onClick={fillRandomMatrix}>random</button>
 			<button className="button-30" onClick={solve}>solve</button>
 			<button className="button-30" onClick={reset}>reset</button>
