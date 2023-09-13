@@ -45,36 +45,116 @@ function App() {
 	}	
 
 	function fillRandomMatrix() {
-		let randomMatrix = [ 
-			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
-			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
-			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
-			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
-			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
-			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
-			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
-			[-1, -1, -1, -1, -1, -1, -1, -1, -1],
-			[-1, -1, -1, -1, -1, -1, -1, -1, -1]
-		];
+		let randomMatrix = getDeepCopy(defaultMatrix);
 
-		let i = 0;
-		while (i<20) {
-			const row = Math.floor(Math.random() * 9);
-      		const col = Math.floor(Math.random() * 9);
-			const num = Math.floor(Math.random() * 9)+1;
-			if(randomMatrix[row][col] === -1 & 
-				isValidInRow(randomMatrix, row, num) &&
-				isValidInCol(randomMatrix, col, num) &&
-				isValidInBox(randomMatrix, row, col, num)
-			) {
-				randomMatrix[row][col] = num;
-				i++;
+		let a = [1,2,3,4,5,6,7,8,9];
+		shuffleArray(a);
+
+		for(let row=0; row<3; row++) {
+			for(let col=0; col<3; col++) {
+
+				randomMatrix[row][col] = a[0];
+				a.shift();
+
 			}
 		}
 
-		setSudokuArr(randomMatrix);
+		a = [1,2,3,4,5,6,7,8,9];
+		shuffleArray(a);
+
+		for(let row=3; row<6; row++) {
+			for(let col=3; col<6; col++) {
+				
+				randomMatrix[row][col] = a[0];
+				a.shift();
+
+
+			}
+		}
+
+		a = [1,2,3,4,5,6,7,8,9];
+		shuffleArray(a);
+
+		for(let row=6; row<9; row++) {
+			for(let col=6; col<9; col++) {
+				randomMatrix[row][col] = a[0];
+				a.shift();
+
+			}
+		}
+			
+		function matrixSolve(matrix) {
+			function isSafe(row, col, num) {
+			  for (let i = 0; i < 9; i++) {
+				if (matrix[row][i] === num || matrix[i][col] === num) {
+				  return false;
+				}
+			  }
+			  
+			  const startRow = Math.floor(row / 3) * 3;
+			  const startCol = Math.floor(col / 3) * 3;
+			  
+			  for (let i = 0; i < 3; i++) {
+				for (let j = 0; j < 3; j++) {
+				  if (matrix[startRow + i][startCol + j] === num) {
+					return false;
+				  }
+				}
+			  }
+			  
+			  return true;
+			}
+		  
+			function back() {
+			  for (let row = 0; row < 9; row++) {
+				for (let col = 0; col < 9; col++) {
+				  if (matrix[row][col] === -1) {
+					for (let num = 1; num <= 9; num++) {
+					  if (isSafe(row, col, num)) {
+						matrix[row][col] = num;
+						if (back()) {
+						  return true;
+						}
+						matrix[row][col] = -1;
+					  }
+					}
+					return false;
+				  }
+				}
+			  }
+			  return true; 
+			}
+		
+			if (back()) {
+			  return matrix;
+			} 
+		  }
+		  
+		  const solution = matrixSolve(randomMatrix);
+
+		  for(let i=0; i<10; i++) {
+
+			while(true) {
+				let row = Math.floor(Math.random() * 9);
+				let col = Math.floor(Math.random() * 9);
+				if (solution[row][col] !== -1) {
+					solution[row][col] = -1;
+					break;
+				}
+			}
+		  }
+
+
+		setSudokuArr(solution);
    
 	}
+
+	function shuffleArray(array) {
+		for (let i = array.length - 1; i > 0; i--) {
+		  const j = Math.floor(Math.random() * (i + 1));
+		  [array[i], array[j]] = [array[j], array[i]];
+		}
+	  }
 
 	function isValidInRow(board, row, num) {
 		return !board[row].includes(num);
