@@ -1,26 +1,53 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 function App() {
 	const defaultMatrix = Array.from({ length: 9 }, () => Array(9).fill(-1));
 
 	const [sudokuArr, setSudokuArr] = useState(getDeepCopy(defaultMatrix));
 	const [solved, setSolved] = useState(false);
+	const [difficulty, setDifficulty] = useState("easy");
+	const [openSelect, setOpenSelect] = useState(false);
+	const [time, setTime] = useState(0);
+	const [timerOn, setTimerOn] = useState(false);
+
+	const leageInput = useRef();
 
 	useEffect(() => {
 		setSolved(false); 
 	  }, [sudokuArr]);
+
+	useEffect(() => {
+		let interval = null;
+	
+		if (timerOn) {
+		  interval = setInterval(() => {
+			setTime((prevTime) => prevTime + 10);
+		  }, 10);
+		} else if (!timerOn) {
+		  clearInterval(interval);
+		}
+	
+		return () => clearInterval(interval);
+	  }, [timerOn]);
 
 	function getDeepCopy(arr) {
 		return JSON.parse(JSON.stringify(arr));
 	}
 
 	function fillRandomMatrix() {
+		if (solved) {
+			return;
+		}
+
+		reset();
+
 		let randomMatrix = getDeepCopy(defaultMatrix);
 		const matrixSize = 3;
 		let x = 0;
+
 
 		for(let r=0; r<2; r++) {
 			let numbers = shuffleArray([1,2,3,4,5,6,7,8,9]);
@@ -31,9 +58,26 @@ function App() {
 			}
 			x += matrixSize;
 		}
-		randomMatrix = deleteNumbers(matrixSolve(randomMatrix), 40); 
+
+		let d = 0;
+		switch (difficulty) {
+			case "easy":
+				d = 20;
+				break;
+			case "medium":
+				d = 40;
+				break;
+			case "hard":
+				d = 60;
+				break;
+			default:
+				d = 20; 
+				break;
+		}
+		randomMatrix = deleteNumbers(matrixSolve(randomMatrix), d); 
 
 		setSudokuArr(randomMatrix);
+		setTimerOn(true)
 	}
 
 	function shuffleArray(array) {
@@ -114,6 +158,7 @@ function App() {
 		});
 		if (solveSudoku(0, 0)) {
 			setSolved(true);
+			setTimerOn(false)
 		} 
 	} 
 	  
@@ -165,6 +210,17 @@ function App() {
  		});
 		setSudokuArr(getDeepCopy(defaultMatrix));
 		setSolved(false); 
+		setTime(0);
+	}
+
+	function selectValue(e) {
+		const selectedDifficulty = e.target.innerText;
+		setDifficulty(selectedDifficulty);
+		setOpenSelect(false);
+	  }
+
+	function openOption() {
+		setOpenSelect(true);
 	}
 	  
 return (
@@ -197,13 +253,13 @@ return (
 			<div class="btn-group btn-group-lg" role="group" aria-label="Large button group">
 				
 				<div class="btn-group" role="group" aria-label="Button group with nested dropdown"> 
-					<button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-						difficulty
+					<button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" onClick={openOption}>
+						{difficulty}
 					</button>
-					<ul class="dropdown-menu">
-						<li><a class="dropdown-item" href="#">easy</a></li>
-						<li><a class="dropdown-item" href="#">medium</a></li>
-						<li><a class="dropdown-item" href="#">hard</a></li>
+					<ul class={`dropdown-menu ${openSelect ? 'show' : ''}`}>
+						<li><a class="dropdown-item" href="#" onClick={selectValue}>easy</a></li>
+						<li><a class="dropdown-item" href="#" onClick={selectValue}>medium</a></li>
+						<li><a class="dropdown-item" href="#" onClick={selectValue}>hard</a></li>
 					</ul>
 				</div>
 
@@ -212,6 +268,11 @@ return (
 				<button type="button" class="btn btn-outline-danger" onClick={reset}>reset</button>
 
 			</div>
+	
+			<div id="display">
+				<span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
+				<span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}</span>
+     		 </div>
 	 	 </div>
 	  </div>
 	</div>

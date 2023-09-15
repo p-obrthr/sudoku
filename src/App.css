@@ -20,11 +20,11 @@ table {
 }
 
 .bBorder {
-	border-bottom: 2px solid yellow;
+	border-bottom: 3px solid #282c34;
 }
 
 .rBorder {
-	border-right: 2px solid yellow;
+	border-right: 3px solid #282c34;
 }
 
 .cellInput {
@@ -35,6 +35,10 @@ table {
 	padding: 0px;
 	border: 1px solid black;
   border-radius: 3px;
+}
+
+.cellInput:hover {
+  background-color: grey; 
 }
 
 .buttonContainer {
@@ -87,4 +91,11 @@ table {
   transform: translateY(2px);
 }
 
-
+#display {
+  font-size: 24px;
+  color: darkgrey;
+  height: 60px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
