@@ -20,11 +20,11 @@ table {
 }
 
 .bBorder {
-	border-bottom: 2px solid yellow
+	border-bottom: 2px solid yellow;
 }
 
 .rBorder {
-	border-right: 2px solid yellow
+	border-right: 2px solid yellow;
 }
 
 .cellInput {
@@ -34,10 +34,11 @@ table {
 	text-align: center;
 	padding: 0px;
 	border: 1px solid black;
+  border-radius: 3px;
 }
 
 .buttonContainer {
-	margin-top: 20px;
+	margin-top: 30px;
 }
 
 .button-30 {

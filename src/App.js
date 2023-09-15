@@ -170,7 +170,7 @@ function App() {
 return (
 	<div className="App">
 	  <div className="App-header">
-		<h3>sudoku</h3>
+		<h1>SUDOKU</h1>
 		<table>
 		  <tbody>
 			{
@@ -194,10 +194,25 @@ return (
 		  </tbody>
 		</table>
 		<div className="buttonContainer">
-			<button className="button-30" onClick={fillRandomMatrix}>random</button>
-			<button className="button-30" onClick={solve}>solve</button>
-			<button className="button-30" onClick={reset}>reset</button>
-	  </div>
+			<div class="btn-group btn-group-lg" role="group" aria-label="Large button group">
+				
+				<div class="btn-group" role="group" aria-label="Button group with nested dropdown"> 
+					<button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+						difficulty
+					</button>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="#">easy</a></li>
+						<li><a class="dropdown-item" href="#">medium</a></li>
+						<li><a class="dropdown-item" href="#">hard</a></li>
+					</ul>
+				</div>
+
+				<button type="button" class="btn btn-outline-warning" onClick={fillRandomMatrix}>start</button>
+				<button type="button" class="btn btn-outline-success" onClick={solve}>solve</button>
+				<button type="button" class="btn btn-outline-danger" onClick={reset}>reset</button>
+
+			</div>
+	 	 </div>
 	  </div>
 	</div>
   );
