@@ -12,6 +12,7 @@ function App() {
 	const [openSelect, setOpenSelect] = useState(false);
 	const [time, setTime] = useState(0);
 	const [timerOn, setTimerOn] = useState(false);
+	const [error, setError] = useState(0);
 
 	const leageInput = useRef();
 
@@ -140,6 +141,15 @@ function App() {
 			let updatedSudoku = getDeepCopy(sudokuArr);
 			updatedSudoku[row][col] = val;
 			setSudokuArr(updatedSudoku);
+			if (!isValidMove(sudokuArr, row, col, val)) {
+				e.target.classList.add('invalid-input');
+				setError(error + 1);
+			} else {
+				e.target.classList.remove('invalid-input');
+			  }
+			if (error + 1 === 3) {
+				gameOver();
+			}
 		  }
 		}
 	  }
@@ -207,9 +217,12 @@ function App() {
 		const inputs = document.querySelectorAll(".cellInput");
   		inputs.forEach((input) => {
     	input.removeAttribute("disabled");
+		input.classList.remove('invalid-input');
  		});
 		setSudokuArr(getDeepCopy(defaultMatrix));
 		setSolved(false); 
+		setTimerOn(false);
+		setError(0);
 		setTime(0);
 	}
 
@@ -221,6 +234,11 @@ function App() {
 
 	function openOption() {
 		setOpenSelect(true);
+	}
+
+	function gameOver() {
+		alert("you have 3 errors -> game over");
+		reset();
 	}
 	  
 return (
@@ -269,11 +287,14 @@ return (
 
 			</div>
 	
-			<div id="display">
+			<div id="stopwatch">
 				<span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
 				<span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}</span>
-     		 </div>
-	 	 </div>
+			</div>
+			<div id="errorCount">
+				<span>error: {error}</span>
+			</div>
+	 	</div>
 	  </div>
 	</div>
   );
