@@ -1,7 +1,10 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import { useState, useEffect, useRef } from 'react';
+
+const EASY = "easy";
+	const MEDIUM = "medium";
+	const HARD = "hard";
 
 function App() {
 	const defaultMatrix = Array.from({ length: 9 }, () => Array(9).fill(-1));
@@ -13,8 +16,6 @@ function App() {
 	const [time, setTime] = useState(0);
 	const [timerOn, setTimerOn] = useState(false);
 	const [error, setError] = useState(0);
-
-	const leageInput = useRef();
 
 	useEffect(() => {
 		setSolved(false); 
@@ -62,13 +63,13 @@ function App() {
 
 		let d = 0;
 		switch (difficulty) {
-			case "easy":
+			case EASY:
 				d = 20;
 				break;
-			case "medium":
+			case MEDIUM:
 				d = 40;
 				break;
-			case "hard":
+			case HARD:
 				d = 60;
 				break;
 			default:
@@ -144,12 +145,12 @@ function App() {
 			if (!isValidMove(sudokuArr, row, col, val)) {
 				e.target.classList.add('invalid-input');
 				setError(error + 1);
+				if (error+1 === 3) {
+					gameOver();
+				}
 			} else {
 				e.target.classList.remove('invalid-input');
 			  }
-			if (error + 1 === 3) {
-				gameOver();
-			}
 		  }
 		}
 	  }
@@ -194,6 +195,10 @@ function App() {
 	}
 	  
 	function isValidMove(matrix, row, col, num) {
+
+		if (num === -1) {
+			return true;
+		}
 
 		for (let i = 0; i < 9; i++) {
 		  if (matrix[row][i] === num || matrix[i][col] === num) {
