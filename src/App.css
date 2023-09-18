@@ -45,6 +45,10 @@ table {
 	margin-top: 30px;
 }
 
+.hovered {
+  background-color: lightgray; 
+}
+
 .button-30 {
   align-items: center;
   appearance: none;

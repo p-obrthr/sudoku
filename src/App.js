@@ -16,6 +16,7 @@ function App() {
 	const [time, setTime] = useState(0);
 	const [timerOn, setTimerOn] = useState(false);
 	const [error, setError] = useState(0);
+	const [highlightEnabled, setHighlightEnabled] = useState(true);
 
 	useEffect(() => {
 		setSolved(false); 
@@ -79,7 +80,8 @@ function App() {
 		randomMatrix = deleteNumbers(matrixSolve(randomMatrix), d); 
 
 		setSudokuArr(randomMatrix);
-		setTimerOn(true)
+		setTimerOn(true);
+		disable();
 	}
 
 	function shuffleArray(array) {
@@ -159,6 +161,14 @@ function App() {
 		if (solved) {
 			return;
 		}
+		disable();
+		if (solveSudoku(0, 0)) {
+			setSolved(true);
+			setTimerOn(false)
+		} 
+	} 
+
+	function disable() {
 		const inputs = document.querySelectorAll(".cellInput");
   		inputs.forEach((input) => {
 			const row = parseInt(input.getAttribute("data-row"));
@@ -167,11 +177,7 @@ function App() {
 				input.setAttribute("disabled", "true");
 			}
 		});
-		if (solveSudoku(0, 0)) {
-			setSolved(true);
-			setTimerOn(false)
-		} 
-	} 
+	}
 	  
 	function solveSudoku(row, col) {
 		if (row === 9) {
@@ -245,6 +251,29 @@ function App() {
 		alert("you have 3 errors -> game over");
 		reset();
 	}
+
+	function onMouseEnter(row, col) {
+		const inputs = document.querySelectorAll(".cellInput");
+		inputs.forEach((input) => {
+		  const r = parseInt(input.getAttribute("data-row"));
+		  const c = parseInt(input.getAttribute("data-col"));
+	  
+		  if (r === row || c === col || (Math.floor(r / 3) === Math.floor(row / 3) && Math.floor(c / 3) === Math.floor(col / 3))) {
+			input.classList.add('hovered');
+		  }
+		});
+	  }
+	  
+	  function onMouseLeave() {
+		const inputs = document.querySelectorAll(".cellInput");
+		inputs.forEach((input) => {
+		  input.classList.remove('hovered');
+		});
+	  }
+
+	  function toggleHighlight() {
+		setHighlightEnabled(!highlightEnabled);
+	  }
 	  
 return (
 	<div className="App">
@@ -263,6 +292,8 @@ return (
 					  className = "cellInput"
 					  data-row={row}
                       data-col={col}
+					  onMouseEnter={highlightEnabled ? () => onMouseEnter(row, col) : null}
+					  onMouseLeave={highlightEnabled ? onMouseLeave : null}
 					  /* disabled alternative */
 					  />
 					</td>
@@ -298,6 +329,18 @@ return (
 			</div>
 			<div id="errorCount">
 				<span>error: {error}</span>
+			</div>
+
+			<div class="form-check form-switch">
+				<input 
+					class="form-check-input" 
+					type="checkbox" 
+					role="switch" 
+					id="flexSwitchCheckChecked" 
+					checked={highlightEnabled}
+					onChange={toggleHighlight}
+					/>
+				<label class="form-check-label" for="flexSwitchCheckChecked">highlights</label>
 			</div>
 	 	</div>
 	  </div>
